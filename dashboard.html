@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard EDA — AVC · Alex</title>
+  <meta name="description" content="Dashboard de visualisation de l'analyse exploratoire (EDA) du cours AVC : déséquilibre des classes, âges, facteurs de risque.">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f6f8fa;
+      --text: #1f2328;
+      --text-muted: #59636e;
+      --accent: #0969da;
+      --accent-2: #0969da;
+      --warn: #bf3989;
+      --ok: #1a7f37;
+      --border: #d1d9e0;
+      --max-width: 1100px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+    /* ---- Header ---- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+
+    .brand { font-weight: 600; color: var(--text); text-decoration: none; }
+    .brand span { color: var(--text-muted); font-weight: 400; }
+
+    nav ul { display: flex; gap: 24px; margin: 0; padding: 0; list-style: none; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: color 0.15s ease; }
+    nav a:hover { color: var(--accent); }
+
+    /* ---- Hero ---- */
+    .hero { padding: 48px 0 40px; border-bottom: 1px solid var(--border); }
+    .hero h1 { margin: 0 0 8px; font-size: 2rem; letter-spacing: -0.02em; }
+    .hero p { margin: 0; max-width: 720px; color: var(--text-muted); }
+
+    /* ---- KPIs ---- */
+    .kpis {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px; padding: 32px 0;
+    }
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+
+    .kpi .value { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; }
+    .kpi .value small { font-size: 0.9rem; font-weight: 400; color: var(--text-muted); }
+    .kpi .label { font-size: 0.8rem; color: var(--text-muted); }
+    .kpi.accent .value { color: var(--accent); }
+    .kpi.warn .value { color: var(--warn); }
+
+    /* ---- Sections / charts ---- */
+    section { padding: 40px 0; border-top: 1px solid var(--border); }
+    section h2 { margin: 0 0 4px; font-size: 1.35rem; letter-spacing: -0.01em; }
+    section .section-sub { margin: 0 0 24px; color: var(--text-muted); font-size: 0.95rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    .chart-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .chart-card h3 { margin: 0 0 4px; font-size: 1rem; }
+    .chart-card .chart-sub { margin: 0 0 12px; font-size: 0.8rem; color: var(--text-muted); }
+    .chart-wrap { position: relative; height: 300px; }
+    .chart-card.tall .chart-wrap { height: 340px; }
+
+    .note {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ---- Gallery ---- */
+    .gallery {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .gallery figure {
+      margin: 0; border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; background: var(--bg);
+      transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+    .gallery figure:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .gallery img { display: block; width: 100%; height: auto; }
+    .gallery figcaption {
+      padding: 10px 14px; font-size: 0.8rem; color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ---- Footer ---- */
+    footer {
+      padding: 32px 0; border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.85rem; text-align: center;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      nav ul { display: none; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero { padding: 36px 0; }
+      .hero h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <nav aria-label="Navigation principale">
+        <a class="brand" href="index.html">Alex <span>· Dashboard EDA</span></a>
+        <ul>
+          <li><a href="#jeu-de-donnees">Données</a></li>
+          <li><a href="#effets-de-cadre">Effets de cadre</a></li>
+          <li><a href="#facteurs">Facteurs de risque</a></li>
+          <li><a href="#figures-cours">Figures du cours</a></li>
+          <li><a href="index.html">← Portfolio</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="container">
+        <h1>Dashboard EDA — Dataset AVC</h1>
+        <p>
+          Visualisation interactive de l'analyse exploratoire du cours
+          <em>stroke_EDA_pas_a_pas</em> : 5&nbsp;110 dossiers patients, un objectif
+          pédagogique clair — comprendre pourquoi il ne faut pas lire un pourcentage
+          sans son effectif.
+        </p>
+      </div>
+    </div>
+
+    <div class="kpis container" id="jeu-de-donnees">
+      <div class="kpi">
+        <div class="value" id="kpi-total">—</div>
+        <div class="label">Dossiers analysés</div>
+      </div>
+      <div class="kpi warn">
+        <div class="value" id="kpi-avec">—</div>
+        <div class="label">Dossiers avec AVC</div>
+      </div>
+      <div class="kpi accent">
+        <div class="value" id="kpi-taux">—</div>
+        <div class="label">Taux d'AVC global</div>
+      </div>
+      <div class="kpi">
+        <div class="value" id="kpi-age-avec">—</div>
+        <div class="label">Âge moyen · AVC</div>
+      </div>
+      <div class="kpi">
+        <div class="value" id="kpi-age-sans">—</div>
+        <div class="label">Âge moyen · sans AVC</div>
+      </div>
+      <div class="kpi warn">
+        <div class="value" id="kpi-bmi-na">—</div>
+        <div class="label">BMI manquants</div>
+      </div>
+    </div>
+
+    <section id="effets-de-cadre">
+      <div class="container">
+        <h2>Trois graphiques, une leçon</h2>
+        <p class="section-sub">
+          Reprendre les figures du cours en interactif : le déséquilibre des classes,
+          la distribution des âges, et le piège du pourcentage sans effectif.
+        </p>
+        <div class="grid-2">
+          <div class="chart-card">
+            <h3>Combien de dossiers dans chaque groupe ?</h3>
+            <p class="chart-sub">Figure 01 — 4,9 % des dossiers ont un AVC : la classe minoritaire</p>
+            <div class="chart-wrap"><canvas id="ch-classes"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Comment les âges sont-ils répartis ?</h3>
+            <p class="chart-sub">Figure 03 — tranches de 10 ans, avec effectifs d'AVC superposés</p>
+            <div class="chart-wrap"><canvas id="ch-hist"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Taux d'AVC par tranche d'âge</h3>
+            <p class="chart-sub">Figure 06 corrigée — chaque tranche ramenée à son propre %</p>
+            <div class="chart-wrap"><canvas id="ch-taux-age"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Taux d'AVC d'après un facteur</h3>
+            <p class="chart-sub">Sélectionnez un facteur ci-dessous pour comparer les groupes</p>
+            <div>
+              <select id="facteur-select" aria-label="Choisir un facteur à afficher"
+                style="width:100%; padding:8px 12px; font-size:0.9rem; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--text); margin-bottom:12px;">
+                <option value="hyper">Hypertension</option>
+                <option value="heart">Maladie cardiaque</option>
+                <option value="married">Statut marital</option>
+                <option value="work">Type de travail</option>
+                <option value="smoke">Tabac</option>
+                <option value="residence">Lieu de résidence</option>
+              </select>
+              <div class="chart-wrap" style="height:220px"><canvas id="ch-facteur"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card tall" style="margin-top:24px">
+          <h3>Proportion d'AVC selon le mariage et l'âge</h3>
+          <p class="chart-sub">Figure 08 — le même pourcentage raconte trois histoires différentes selon la tranche d'âge</p>
+          <div class="chart-wrap tall" style="height:320px"><canvas id="ch-marriage"></canvas></div>
+        </div>
+
+        <div class="note">
+          <strong>La leçon du cours&nbsp;:</strong> «&nbsp;19,6&nbsp;% d'AVC chez les jamais mariés de 60 ans et +&nbsp;»
+          repose sur <strong>21 cas</strong> sur 107, contre 160 sur 1 269 (12,6&nbsp;%) chez les déjà mariés.
+          Même différence apparente, robustesse très différente. Toujours afficher le couple
+          <em>pourcentage + effectif</em>.
+        </div>
+      </div>
+    </section>
+
+    <section id="facteurs">
+      <div class="container">
+        <h2>Facteurs de risque en un coup d'œil</h2>
+        <p class="section-sub">Taux d'AVC (%) dans chaque catégorie, avec les effectifs en info-bulle.</p>
+        <div class="grid-2">
+          <div class="chart-card"><div class="chart-wrap" style="height:260px"><canvas id="ch-comparatif-1"></canvas></div></div>
+          <div class="chart-card"><div class="chart-wrap" style="height:260px"><canvas id="ch-comparatif-2"></canvas></div></div>
+        </div>
+        <div class="note">
+          Lecture prudente&nbsp;: corrélé ne veut pas dire causal. Les enfants (0,3&nbsp;% d'AVC) sont
+          surtout… jeunes. L'âge traverse presque toutes ces variables — c'est le Portrait-robot
+          discret du cours.
+        </div>
+      </div>
+    </section>
+
+    <section id="figures-cours">
+      <div class="container">
+        <h2>Figures originales du cours</h2>
+        <p class="section-sub">
+          Les 9 graphiques exportés par le notebook <em>stroke_EDA_pas_a_pas.ipynb</em>
+          (cliquer pour ouvrir en taille réelle).
+        </p>
+        <div class="gallery" id="gallery"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Données : <code>stroke_anonyme.csv</code> (5 110 lignes) — analyse : <code>stroke_EDA_pas_a_pas.ipynb</code>.
+      <br>Retour au <a href="index.html">portfolio</a>.
+    </div>
+  </footer>
+
+  <script src="eda-data.js"></script>
+  <script>
+    const D = window.EDA_DATA;
+    const S = D.stats;
+    const ACCENT = '#0969da', WARN = '#bf3989', MUTED = '#59636e', BORDER = '#d1d9e0';
+
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+    Chart.defaults.color = MUTED;
+    Chart.defaults.borderColor = BORDER;
+
+    // ---- KPIs ----
+    kpi('kpi-total', S.total.toLocaleString('fr-FR'));
+    kpi('kpi-avec', S.avec.toLocaleString('fr-FR') + ' <small>(' + S.taux + '&nbsp;%)</small>');
+    kpi('kpi-taux', S.taux + ' <small>%</small>');
+    kpi('kpi-age-avec', S.ageMoyenAvec + ' <small>ans</small>');
+    kpi('kpi-age-sans', S.ageMoyenSans + ' <small>ans</small>');
+    kpi('kpi-bmi-na', S.bmiManquants + ' <small>(dont ' + S.bmiManquantsAvec + ' AVC)</small>');
+
+    function kpi(id, html) { document.getElementById(id).innerHTML = html; }
+
+    const legendOpts = { legend: { display: false } };
+    const pctTicks = { callback: v => v + '%' };
+
+    // ---- 1. Classes ----
+    new Chart(chClasses(), {
+      type: 'bar',
+      data: {
+        labels: ['Sans AVC', 'Avec AVC'],
+        datasets: [{
+          data: [S.sans, S.avec],
+          backgroundColor: [ACCENT, WARN],
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: legendOpts,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+    function chClasses() { return document.getElementById('ch-classes'); }
+
+    // ---- 2. Histogramme des âges ----
+    new Chart(document.getElementById('ch-hist'), {
+      data: {
+        labels: D.hist.map(h => h.tranche),
+        datasets: [
+          {
+            type: 'bar', label: 'Dossiers sans AVC',
+            data: D.hist.map(h => h.n - h.avec),
+            backgroundColor: ACCENT, borderRadius: 4, stack: 's'
+          },
+          {
+            type: 'bar', label: 'Dossiers avec AVC',
+            data: D.hist.map(h => h.avec),
+            backgroundColor: WARN, borderRadius: 4, stack: 's'
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12 } },
+          tooltip: {
+            callbacks: {
+              footer: items => {
+                const t = D.hist[items[0].dataIndex];
+                return 'Total : ' + t.n + ' — ' + pct(t.avec, t.n) + '% AVC';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true, beginAtZero: true }
+        }
+      }
+    });
+
+    function pct(a, b) { return b ? Math.round(1000 * a / b) / 10 : 0; }
+
+    // ---- 3. Taux d'AVC par tranche d'âge ----
+    new Chart(document.getElementById('ch-taux-age'), {
+      type: 'line',
+      data: {
+        labels: D.hist.map(h => h.tranche),
+        datasets: [{
+          label: '% AVC dans la tranche',
+          data: D.hist.map(h => pct(h.avec, h.n)),
+          borderColor: WARN, backgroundColor: 'rgba(191,57,137,0.12)',
+          fill: true, tension: 0.25, pointRadius: 4, pointBackgroundColor: WARN
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: legendOpts,
+        scales: { y: { beginAtZero: true, ticks: pctTicks, max: 25 } }
+      }
+    });
+
+    // ---- 4. Facteur dynamique ----
+    const facteurData = {
+      hyper: D.hyper, heart: D.heart, married: D.married,
+      work: D.work, smoke: D.smoke, residence: D.residence
+    };
+    let facteurChart = new Chart(document.getElementById('ch-facteur'), {
+      type: 'bar',
+      data: buildFacteur('hyper'),
+      options: facteurOpts()
+    });
+
+    document.getElementById('facteur-select').addEventListener('change', e => {
+      facteurChart.data = buildFacteur(e.target.value);
+      facteurChart.update();
+    });
+
+    function buildFacteur(key) {
+      const rows = facteurData[key];
+      return {
+        labels: rows.map(r => r.v),
+        datasets: [{
+          data: rows.map(r => r.pct),
+          backgroundColor: rows.map(r => r.pct >= 10 ? WARN : ACCENT),
+          borderRadius: 4
+        }]
+      };
+    }
+
+    function facteurOpts() {
+      return {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: ctx => {
+                const r = facteurData[document.getElementById('facteur-select').value][ctx.dataIndex];
+                return r.avec + ' AVC sur ' + r.n + ' dossiers';
+              }
+            }
+          }
+        },
+        scales: { x: { beginAtZero: true, ticks: pctTicks } }
+      };
+    }
+
+    // ---- 5. Mariage x âge ----
+    new Chart(document.getElementById('ch-marriage'), {
+      type: 'bar',
+      data: {
+        labels: ['0-39 ans', '40-59 ans', '60 ans et +'],
+        datasets: [
+          {
+            label: 'Jamais marié',
+            data: D.marriage.filter(r => r.groupe === 'Jamais marié').map(r => r.pct),
+            backgroundColor: ACCENT, borderRadius: 4
+          },
+          {
+            label: 'Déjà marié',
+            data: D.marriage.filter(r => r.groupe === 'Déjà marié').map(r => r.pct),
+            backgroundColor: WARN, borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12 } },
+          tooltip: {
+            callbacks: {
+              afterLabel: ctx => {
+                const rows = D.marriage.filter(r => r.groupe === ctx.dataset.label);
+                const r = rows[ctx.dataIndex];
+                return r.avec + ' / ' + r.n + ' dossiers (' + r.pct + ' %)';
+              }
+            }
+          }
+        },
+        scales: { y: { beginAtZero: true, ticks: pctTicks } }
+      }
+    });
+
+    // ---- 6. Comparatifs ----
+    const comparatifs = [
+      { canvas: 'ch-comparatif-1', datasets: [
+        { titre: 'Hypertension', rows: D.hyper },
+        { titre: 'Maladie cardiaque', rows: D.heart }
+      ]},
+      { canvas: 'ch-comparatif-2', datasets: [
+        { titre: 'Tabac', rows: D.smoke },
+        { titre: 'Type de travail', rows: D.work }
+      ]}
+    ];
+
+    comparatifs.forEach(c => {
+      const labels = [], data = [], colors = [];
+      c.datasets.forEach(ds =>
+        ds.rows.forEach(r => {
+          labels.push(ds.titre + ' · ' + r.v);
+          data.push(r.pct);
+          colors.push(r.pct >= 10 ? WARN : ACCENT);
+        })
+      );
+      new Chart(document.getElementById(c.canvas), {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: legendOpts,
+          scales: { x: { beginAtZero: true, ticks: pctTicks } }
+        }
+      });
+    });
+
+    // ---- 7. Galerie des figures du cours ----
+    const captions = [
+      'Fig. 01 — Combien de dossiers dans chaque groupe ?',
+      'Fig. 02 — Comparer les absences dans les deux groupes',
+      'Fig. 03 — Comment les âges sont-ils répartis ?',
+      'Fig. 04 — Vérifier que le dessin ne décide pas à notre place',
+      'Fig. 05 — Première tentative : séparer les groupes par couleur',
+      'Fig. 06 — Deuxième tentative : ramener chaque groupe à 100 %',
+      'Fig. 07 — Vérifier une impression avec un nombre',
+      'Fig. 08 — Proportion d\u2019AVC selon le mariage et l\u2019âge',
+      'Fig. 09 — La conclusion en six phrases'
+    ];
+    const gallery = document.getElementById('gallery');
+    for (let i = 1; i <= 9; i++) {
+      const f = document.createElement('figure');
+      f.innerHTML =
+        '<a href="figs/figure_0' + i + '.png" target="_blank" rel="noopener">' +
+          '<img src="figs/figure_0' + i + '.png" alt="' + captions[i - 1] + '" loading="lazy">' +
+        '</a>' +
+        '<figcaption>' + captions[i - 1] + '</figcaption>';
+      gallery.appendChild(f);
+    }
+  </script>
+</body>
+</html>
