@@ -1,145 +1,406 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>§$% ROBERT DEV WEB PRO §$%</title>
-<style>
-  /* CSS 100% MAISON ne pas voler svp (c) 1998 */
-  body {
-    background: repeating-linear-gradient(45deg, magenta, lime 10px, cyan 20px, magenta 30px);
-    font-family: "Comic Sans MS", cursive, "Times New Roman";
-    color: red;
-    cursor: wait;
-    margin: 0px !important;
-    border: 20px solid orange;
-    outline: 10px dashed green;
-  }
-  h1 {
-    color: #00ff00;
-    background: darkblue;
-    font-size: 500%;
-    text-align: justified;
-    letter-spacing: -8px;
-    text-shadow: 3px 3px 0 red, -3px -3px 0 yellow, 5px 5px 30px purple;
-    transform: rotate(-3deg);
-  }
-  h2 {
-    color: yellow;
-    background: black;
-    font-size: 350%;
-    text-decoration: blink;
-    font-style: italic;
-    font-weight: normal;
-    word-spacing: 30px;
-  }
-  .super {
-    color: white;
-    background: hotpink;
-    font-size: 200%;
-    border: 10px ridge navy;
-    padding: 50px 5px;
-    margin: -20px;
-    float: right;
-    width: 30%;
-  }
-  .moins-super {
-    color: lime;
-    background: purple;
-    font-size: 150%;
-    border: 15px dotted olive;
-    padding: 2px 200px;
-    transform: rotate(180deg);
-    display: inline;
-  }
-  p {
-    color: cyan;
-    background: maroon;
-    font-size: 120%;
-    line-height: 0.7;
-    text-transform: uppercase;
-    text-align: center;
-  }
-  ul {
-    list-style: none;
-    background: gray;
-    color: pink;
-  }
-  ul li:nth-child(2n) {
-    transform: skewX(30deg);
-    color: aqua;
-  }
-  ul li:nth-child(3n) {
-    transform: skewX(-45deg) translateY(15px);
-    color: orange;
-  }
-  a {
-    color: black;
-    background: lime;
-    font-size: 300%;
-    text-decoration: line-through wavy fuchsia 5px;
-  }
-  a:visited { color: red; background: yellow; }
-  a:hover {
-    font-size: 1000%;
-    transform: rotate(360deg);
-    transition: none;
-  }
-  marquee { font-size: 400%; color: blue; background: silver; }
-  img { width: 100%; filter: saturate(100) hue-rotate(999deg) blur(1px); }
-  ::selection { background: white; color: white; }
-  .footer {
-    position: fixed;
-    bottom: -50px;
-    left: 50%;
-    color: white;
-    background: teal;
-    height: 20px;
-    overflow: visible;
-    z-index: -1;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alex — Développeur Analyste Senior</title>
+  <meta name="description" content="Développeur analyste senior — analyse, conception et développement d'applications robustes.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f6f8fa;
+      --text: #1f2328;
+      --text-muted: #59636e;
+      --accent: #0969da;
+      --border: #d1d9e0;
+      --max-width: 960px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---- Header ---- */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .brand {
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 24px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.15s ease;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    /* ---- Hero ---- */
+    .hero {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2.25rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero .subtitle {
+      margin: 0 0 24px;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .hero p.lead {
+      max-width: 640px;
+      margin: 0 0 32px;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #0860ca; }
+
+    .btn-secondary {
+      border: 1px solid var(--border);
+      color: var(--text);
+      margin-left: 8px;
+    }
+
+    .btn-secondary:hover { background: var(--surface); }
+
+    /* ---- Sections ---- */
+    section { padding: 56px 0; }
+
+    section + section { border-top: 1px solid var(--border); }
+
+    section h2 {
+      margin: 0 0 24px;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    /* ---- Skills ---- */
+    .skills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .skill-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .skill-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- Experience ---- */
+    .timeline { border-left: 2px solid var(--border); }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 32px 24px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-item h3 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .timeline-item .meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 2px 0 8px;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    /* ---- Projects ---- */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .project-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+    .project-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .project-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .project-card p {
+      margin: 0 0 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* ---- Contact ---- */
+    .contact ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .contact a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .contact a:hover { text-decoration: underline; }
+
+    /* ---- Footer ---- */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .hero { padding: 48px 0; }
+      .hero h1 { font-size: 1.75rem; }
+      .btn-secondary { margin-left: 0; margin-top: 8px; }
+    }
+  </style>
 </head>
 <body>
-<marquee behavior="alternate" scrollamount="50">!!! BIENVENUE SUR MON PORTFOLIO DE DÉVELOPPEUR WEB EXPERT !!!</marquee>
 
-<h1>ROBERT DEV WEB (c'est moi)</h1>
+  <header>
+    <div class="container">
+      <nav aria-label="Navigation principale">
+        <a class="brand" href="#">Alex</a>
+        <ul>
+          <li><a href="#competences">Compétences</a></li>
+          <li><a href="#experience">Expérience</a></li>
+          <li><a href="#projets">Projets</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<h2>♦♦♦ MES COMPÉTENCES DÉMENTIELLES ♦♦♦</h2>
+  <main>
+    <div class="hero">
+      <div class="container">
+        <h1>Alex</h1>
+        <p class="subtitle">Développeur Analyste Senior</p>
+        <p class="lead">
+          J'analyse les besoins métier, conçois des architectures solides et
+          développe des applications maintenables. Large expérience en analyse,
+          refonte de systèmes legacy et accompagnement d'équipes.
+        </p>
+        <a class="btn btn-primary" href="#contact">Me contacter</a>
+        <a class="btn btn-secondary" href="#projets">Voir mes projets</a>
+      </div>
+    </div>
 
-<ul>
-  <li>HTML : je connais presque toutes les balises (mêmes celle &lt;marquee&gt; comme tu peux voir)</li>
-  <li>CSS : j'ai réussi à centrer un div UNE fois en 2019 (je n'ai plus la méthode)</li>
-  <li>Responsive : mon site marche sur mon écran, donc ça suffit</li>
-  <li>JavaScript : j'ai copié un bout de code d'un forum en 2011, il est toujours dans un onglet</li>
-  <li>Git : git push --force --no-verify, à chaque fois, sans lire les erreurs</li>
-  <li>Sécurité : mon mot de passe c'est "1234" partout mais je l'écris sur un post-it retourné</li>
-</ul>
+    <section id="competences">
+      <div class="container">
+        <h2>Compétences</h2>
+        <div class="skills">
+          <div class="skill-card">
+            <h3>Analyse &amp; conception</h3>
+            <p>Cadrage fonctionnel, ateliers de spécification, modélisation UML, rédaction de dossiers d'architecture.</p>
+          </div>
+          <div class="skill-card">
+            <h3>Développement</h3>
+            <p>Java, C#, Python, SQL. Programmation orientée objet, tests unitaires, revue de code.</p>
+          </div>
+          <div class="skill-card">
+            <h3>Web</h3>
+            <p>HTML, CSS, JavaScript, API REST, intégration continue.</p>
+          </div>
+          <div class="skill-card">
+            <h3>Méthodes</h3>
+            <p>Agile / Scrum, Git, CI/CD, documentation technique et fonctionnelle.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<p class="super">
-  TÉMOIGNAGE DE CLIENT SATISFAIT : "Robert a livré le projet avec 7 mois de retard mais le favicon était très bien." -- Bernard, ex-client
-</p>
+    <section id="experience">
+      <div class="container">
+        <h2>Expérience</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h3>Développeur Analyste Senior — Société X</h3>
+            <p class="meta">2020 — aujourd'hui</p>
+            <p>Conception et évolution d'un SI métier, modernisation d'applications legacy, mentorat des développeurs juniors.</p>
+          </div>
+          <div class="timeline-item">
+            <h3>Développeur Analyste — Société Y</h3>
+            <p class="meta">2015 — 2020</p>
+            <p>Analyse des besoins clients, spécifications fonctionnelles, développement backend et interfaces web.</p>
+          </div>
+          <div class="timeline-item">
+            <h3>Développeur — Société Z</h3>
+            <p class="meta">2012 — 2015</p>
+            <p>Développement d'applications internes, maintenance corrective et évolutive.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<div class="moins-super">
-  JE CHERCHE DES MISSIONS. Prix attractiveux : 3 frites/heure. Paiement aussi accepté en bons points.
-</div>
+    <section id="projets">
+      <div class="container">
+        <h2>Projets</h2>
+        <div class="projects">
+          <div class="project-card">
+            <h3>Refonte du SI de gestion</h3>
+            <p>Migration d'un système legacy vers une architecture modulaire, sans interruption de service.</p>
+            <div class="tags">
+              <span class="tag">Analyse</span>
+              <span class="tag">SQL</span>
+              <span class="tag">API REST</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <h3>Portail de reporting interne</h3>
+            <p>Tableaux de bord décisionnels consolidant les données de plusieurs directions.</p>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Web</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <h3>Outillage de CI/CD</h3>
+            <p>Mise en place des pipelines de build, tests et déploiement automatisés pour l'équipe.</p>
+            <div class="tags">
+              <span class="tag">DevOps</span>
+              <span class="tag">CI/CD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<p>
-  Mon portfolio a été vu par ma mère. Elle a dit "c'est... original". Meilleure critique jamais reçue. 🏆
-</p>
+    <section id="contact" class="contact">
+      <div class="container">
+        <h2>Contact</h2>
+        <ul>
+          <li>Email : <a href="mailto:alex@example.com">alex@example.com</a></li>
+          <li>LinkedIn : <a href="https://www.linkedin.com/" rel="noopener">/in/alex</a></li>
+          <li>GitHub : <a href="https://github.com/" rel="noopener">github.com/alex</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
 
-<h2>✉✉✉ CONTACTEZ-MOI ✉✉✉</h2>
+  <footer>
+    <div class="container">
+      © 2025 Alex — Portfolio en HTML et CSS purs.
+    </div>
+  </footer>
 
-<p>
-  Email : robert.deweb AT le-fournisseur-recyclé-wanadoo point fr<br>
-  Téléphone : il sonne pas, j'ai perdu le chargeur<br>
-  LinkedIn : profil supprimé après "l'incident"<br>
-  CV : je l'ai en .wps, il vous faut Word 2003
-</p>
-
-<a href="index.html">Cliquez ici pour RIRE ALLER SUR LA PAGE D'ACCUEIL (c'est la même)</a>
-
-<marquee direction="right" scrollamount="100">MERCI DE VOTRE VISITE RETOURNEZ VITE SVP</marquee>
-
-<div class="footer"> copyright 1998-2025 Robert Dev Web. Tous droits presque réservés. propulsé par bloc-notes.exe </div>
 </body>
 </html>
