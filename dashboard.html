@@ -57,7 +57,7 @@
 
     /* ---- Hero ---- */
     .hero { padding: 48px 0 40px; border-bottom: 1px solid var(--border); }
-    .hero h1 { margin: 0 0 8px; font-size: 2rem; letter-spacing: -0.02em; }
+    .hero h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: -0.02em; }
     .hero p { margin: 0; max-width: 720px; color: var(--text-muted); }
 
     /* ---- KPIs ---- */
@@ -97,6 +97,7 @@
     .chart-card .chart-sub { margin: 0 0 12px; font-size: 0.8rem; color: var(--text-muted); }
     .chart-wrap { position: relative; height: 300px; }
     .chart-card.tall .chart-wrap { height: 340px; }
+    .chart-marriage { height: 320px; }
 
     .note {
       margin-top: 20px;
@@ -135,11 +136,55 @@
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
+    section h2 { font-size: clamp(1.2rem, 4vw, 1.35rem); }
+
     @media (max-width: 720px) {
-      nav ul { display: none; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .hero { padding: 36px 0; }
-      .hero h1 { font-size: 1.6rem; }
+      /* Header : brand au-dessus, liens scrollables au lieu de disparaître */
+      header { position: static; backdrop-filter: none; }
+      nav { flex-direction: column; align-items: flex-start; gap: 10px; height: auto; padding: 12px 0; }
+      nav ul {
+        display: flex;
+        gap: 18px;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      nav ul::-webkit-scrollbar { display: none; }
+      nav a { white-space: nowrap; font-size: 0.9rem; }
+
+      .container { padding: 0 16px; }
+      .hero { padding: 32px 0 28px; }
+      .hero h1 { font-size: 1.5rem; }
+      .hero p { font-size: 0.95rem; }
+
+      /* KPIs : 2 colonnes confortables au lieu de 3 compactes */
+      .kpis { grid-template-columns: 1fr 1fr; gap: 10px; padding: 24px 0; }
+      .kpi { padding: 12px 14px; }
+      .kpi .value { font-size: 1.25rem; }
+
+      .grid-2 { grid-template-columns: 1fr; gap: 16px; }
+      section { padding: 32px 0; }
+
+      /* Graphiques : un peu plus bas pour laisser la place aux tooltips */
+      .chart-card { padding: 14px; }
+      .chart-wrap { height: 250px; }
+      .chart-card.tall .chart-wrap { height: 290px; }
+      .chart-marriage { height: 280px; }
+      .wrap-220 { height: 220px; }
+
+      /* Galerie : 2 colonnes serrées au lieu d'une grande par ligne */
+      .gallery { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .gallery figcaption { padding: 8px 10px; font-size: 0.72rem; }
+
+      .note { padding: 12px 14px; font-size: 0.85rem; }
+      footer { padding: 24px 0; }
+    }
+
+    /* Très petits écrans : KPIs sur une colonne, galerie aussi */
+    @media (max-width: 380px) {
+      .kpis { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -244,7 +289,9 @@
         <div class="chart-card tall" style="margin-top:24px">
           <h3>Proportion d'AVC selon le mariage et l'âge</h3>
           <p class="chart-sub">Figure 08 — le même pourcentage raconte trois histoires différentes selon la tranche d'âge</p>
-          <div class="chart-wrap tall" style="height:320px"><canvas id="ch-marriage"></canvas></div>
+          <div class="chart-wrap chart-marriage">
+            <canvas id="ch-marriage" aria-label="Taux d'AVC selon le statut marital, par tranche d'âge" role="img"></canvas>
+          </div>
         </div>
 
         <div class="note">
